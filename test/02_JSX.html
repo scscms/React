@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <title>Basic JSX</title>
+  </head>
+  <body>
+    <h1>JSX and not JSX</h1>
+    <div id="Jsx"></div>
+    <div id="notJsx"></div>
+    <script src="../build/react.js"></script>
+    <script src="../build/react-dom.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/babel-core/5.8.23/browser.min.js"></script>
+
+    <script type="text/babel">
+    var HelloMessage = React.createClass({
+    render: function() {
+      return <div>Hello {this.props.name}</div>;
+      }
+    });
+    ReactDOM.render(<HelloMessage name="Jsx" />, document.getElementById('Jsx'))
+    </script>
+    <!--以上代码编译后等同下面代码-->
+    <script type="text/javascript">
+      var HelloMessage = React.createClass({displayName: "HelloMessage",
+        render: function() {
+          return React.createElement("div", null, "Hello ", this.props.name);
+        }
+      });
+      ReactDOM.render(React.createElement(HelloMessage, {name: "notJsx"}), document.getElementById('notJsx'))
+    </script>
+  </body>
+</html>

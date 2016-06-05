@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <title>Basic state</title>
+  </head>
+  <body>
+    <h1>React state</h1>
+    <div id="state"></div>
+    <div id="TodoList"></div>
+    <script src="../build/react.js"></script>
+    <script src="../build/react-dom.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/babel-core/5.8.23/browser.min.js"></script>
+
+    <script type="text/babel">
+      //state状态，记录React的状态，如果状态改变将触发render重新渲染节点
+      var Timer = React.createClass({
+        getInitialState: function() {
+          return {secondsElapsed: 0};
+        },
+        tick: function() {
+          this.setState({secondsElapsed: this.state.secondsElapsed + 1});
+        },
+        componentDidMount: function() {
+          this.interval = setInterval(this.tick, 1000);//React组件渲染以后被React调用的方法
+        },
+        componentWillUnmount: function() {
+          clearInterval(this.interval);//React组件将要移除后被React调用的方法
+        },
+        render: function() {
+          return (
+            //React.createElement("div", null, "Seconds Elapsed: ", this.state.secondsElapsed)
+            <div>Seconds Elapsed: {this.state.secondsElapsed}</div>
+          );
+        }
+
+      });
+      ReactDOM.render(<Timer />, document.getElementById('state'))
+    </script>
+
+    <script type="text/babel">
+    var TodoList = React.createClass({
+      render: function() {
+        var createItem = function(itemText) {
+          return <li key={itemText}>{itemText}</li>;
+          //react的key关乎到react的dom-diff算法 react中对于dom的操作是根据生成的data-reactid进行绑定的，添加key可以保证dom结构的完整性，而不会根据react自己对dom标记的key进行重新分配 react每次决定重新渲染的时候，几乎完全是根据data-reactid来决定的，最重要的是这个机制
+        };
+        return <ul>{this.props.items.map(createItem)}</ul>;
+      }
+    });
+    var TodoApp = React.createClass({
+      getInitialState: function() {
+        return {items: [], text: ''};
+      },
+      onChange: function(e) {
+        this.setState({text: e.target.value});
+      },
+      handleSubmit: function(e) {
+        e.preventDefault();
+        var nextItems = this.state.items.concat([this.state.text]);
+        var nextText = '';
+        this.setState({items: nextItems, text: nextText});
+      },
+      render: function() {
+        return (
+                <div>
+                  <h3>TODO</h3>
+                  <TodoList items={this.state.items} />
+                  <form onSubmit={this.handleSubmit}>
+                    <input onChange={this.onChange} value={this.state.text} />
+                    <button>{'Add #' + (this.state.items.length + 1)}</button>
+                  </form>
+                </div>
+        );
+      }
+    });
+    ReactDOM.render(<TodoApp />, document.getElementById('TodoList'));
+  </script>
+  </body>
+</html>
